@@ -32,13 +32,14 @@ class Viaje{
     public function setMaxPasajeros($maxPasajeros){
         $this->maxPasajeros = $maxPasajeros;
     }
-    public function setPasajero($pasajeros){
+    public function setPasajeros($pasajeros){
         $this->pasajeros = $pasajeros;
     }
     public function hayPasajesDisponibles(){
-        $disponibilidad = false;
-        if(count($this->getPasajeros()) < $this->getMaxPasajeros()){
+        if(count($this->getPasajeros()) <= $this->getMaxPasajeros()){
             $disponibilidad = true;
+        }else{
+            $disponibilidad = false;
         }
         return $disponibilidad;
     }
@@ -46,14 +47,18 @@ class Viaje{
     public function venderPasaje($objPasajero){
         if ($this->hayPasajesDisponibles()) {
             $colPasajeros = $this->getPasajeros();
-        array_push($colPasajeros, $objPasajero);
-        $this->setPasajeros($colPasajeros);
-        //calculo de costo de viaje
-        $abonoFinal= $this->getCostosAbonados() + $this->calculoFinal($objPasajero);
-        $this->setCostosAbonados($abonoFinal);
-        $precioAbonarPasajero = $this->calculoFinal($objPasajero);
-        } else {
-            $precioAbonarPasajero = 0;
+        foreach($colPasajeros as $col){
+            if($col->getNroTicket() <> $objPasajero->getNroTicket()){
+                array_push($colPasajeros, $objPasajero);
+                $this->setPasajeros($colPasajeros); 
+
+                $abonoFinal= $this->getCostosAbonados() + $this->calculoFinal($objPasajero);
+            $this->setCostosAbonados($abonoFinal);
+            $precioAbonarPasajero = $this->calculoFinal($objPasajero);
+        }
+                }
+            }else {
+                $precioAbonarPasajero = 0;
         }
 
         return $precioAbonarPasajero;
